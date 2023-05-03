@@ -1,7 +1,7 @@
 {
-  "name": "",
+  "name": "funcmata",
   "version": "0.0.0",
-  "description": "",
+  "description": "Functional and simple finite state machine",
   "main": "build/src/index.js",
   "types": "build/src/index.d.ts",
   "files": [
