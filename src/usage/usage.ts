@@ -1,31 +1,28 @@
 import {
-  AnyState,
   DefineFuncmataDefinition,
-  EventType,
   FuncmataEvent,
+  FuncmataState,
 } from '../core/funcmata-definition';
 import {EventHandler} from '../core/event-handler';
-import {TFuncmataState} from '../core/funcmata-state';
+import {Funcmata} from '../core/funcmata-state';
 
 // 1. Define config
 type Def = DefineFuncmataDefinition<{
-  states: {
-    on: {type: 'on'};
-    off: {type: 'off'; offReason: 'initial' | 'standard' | 'emergency'};
-  };
-  events: {
-    set: {type: 'set'; isOn: boolean};
-    toggle: {type: 'toggle'};
-    emergencyStop: {type: 'emergencyStop'};
-  };
+  state:
+    | {type: 'on'}
+    | {type: 'off'; offReason: 'initial' | 'standard' | 'emergency'};
+  event:
+    | {type: 'set'; isOn: boolean}
+    | {type: 'toggle'}
+    | {type: 'emergencyStop'};
 }>;
 
 // 2. Create event handler
 class Handler implements EventHandler<Def> {
-  handleEvent<Type extends EventType<Def>>(
-    event: FuncmataEvent<Def, Type>,
-    state: AnyState<Def>
-  ): AnyState<Def> {
+  handleEvent(
+    event: FuncmataEvent<Def>,
+    state: FuncmataState<Def>
+  ): FuncmataState<Def> {
     switch (event.type) {
       case 'emergencyStop': {
         return {type: 'off', offReason: 'emergency'};
@@ -46,19 +43,19 @@ class Handler implements EventHandler<Def> {
 const handler = new Handler();
 
 // 3. Create state
-const state = TFuncmataState.new<Def>({type: 'off', offReason: 'initial'});
+const state = Funcmata.new<Def>({type: 'off', offReason: 'initial'});
 
 // 4. Emit event and maybe change state
-const newState = TFuncmataState.emitEvent(
+const newState = Funcmata.emitEvent<Def>(
   state,
   {type: 'set', isOn: true},
   handler
 );
 
 // 5. (Optional) Check difference and do something
-if (state.current.type === 'off' && newState.current.type === 'on') {
+if (state.type === 'off' && newState.type === 'on') {
   console.log('light is turned on');
 }
-if (state.current.type === 'on' && newState.current.type === 'off') {
+if (state.type === 'on' && newState.type === 'off') {
   console.log('light is turned off');
 }

@@ -1,15 +1,14 @@
 import {
-  AnyState,
   FuncmataDefinition,
-  EventType,
+  FuncmataState,
   FuncmataEvent,
 } from './funcmata-definition';
 
 export interface EventHandler<Def extends FuncmataDefinition> {
-  handleEvent<Type extends EventType<Def>>(
-    event: FuncmataEvent<Def, Type>,
-    state: AnyState<Def>
-  ): AnyState<Def>;
+  handleEvent(
+    event: FuncmataEvent<Def>,
+    state: FuncmataState<Def>
+  ): FuncmataState<Def>;
 
   // I think onChange is not needed at here.
   // onChange(oldState: AnyState<Def>, newState: AnyState<Def>): void;
