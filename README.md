@@ -8,8 +8,8 @@ Functional and simple finite state machine.
 import {
   AnyState,
   DefineFuncmataDefinition,
-  EventArgs,
   EventType,
+  FuncmataEvent,
   EventHandler,
   TFuncmataState
 } from 'funcmata';
@@ -21,9 +21,9 @@ type Def = DefineFuncmataDefinition<{
     off: {type: 'off'; offReason: 'initial' | 'standard' | 'emergency'};
   };
   events: {
-    set: {args: {isOn: boolean}};
-    toggle: {args: {}};
-    emergencyStop: {args: {}};
+    set: {type: 'set'; isOn: boolean};
+    toggle: {type: 'toggle'; isOn: boolean};
+    emergencyStop: {type: 'emergencyStop'; isOn: boolean};
   };
 }>;
 
@@ -56,7 +56,11 @@ const handler = new Handler();
 const state = TFuncmataState.new<Def>({type: 'off', offReason: 'initial'});
 
 // 4. Emit event and maybe change state
-const newState = TFuncmataState.emitEvent(state, 'set', {isOn: true}, handler);
+const newState = TFuncmataState.emitEvent(
+  state,
+  {type: 'set', isOn: true},
+  handler
+);
 
 // 5. (Optional) Check difference and do something
 if (state.current.type === 'off' && newState.current.type === 'on') {
@@ -65,5 +69,4 @@ if (state.current.type === 'off' && newState.current.type === 'on') {
 if (state.current.type === 'on' && newState.current.type === 'off') {
   console.log('light is turned off');
 }
-
 ```
