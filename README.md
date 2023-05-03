@@ -30,22 +30,24 @@ type Def = DefineFuncmataDefinition<{
 // 2. Create event handler
 class Handler implements EventHandler<Def> {
   handleEvent<Type extends EventType<Def>>(
-    event: Type,
-    state: AnyState<Def>,
-    args: EventArgs<Def, Type>
+    event: FuncmataEvent<Def, Type>,
+    state: AnyState<Def>
   ): AnyState<Def> {
-    if (event === 'emergencyStop') return {type: 'off', offReason: 'emergency'};
-    if (event === 'set') {
-      const type = (args as EventArgs<Def, 'set'>).isOn ? 'on' : 'off';
-      if (type === 'on') return {type};
-      return {type: 'off', offReason: 'standard'};
+    switch (event.type) {
+      case 'emergencyStop': {
+        return {type: 'off', offReason: 'emergency'};
+      }
+      case 'set': {
+        const type = event.isOn ? 'on' : 'off';
+        if (type === 'on') return {type};
+        return {type: 'off', offReason: 'standard'};
+      }
+      case 'toggle': {
+        const type = state.type === 'on' ? 'off' : 'on';
+        if (type === 'on') return {type};
+        return {type: 'off', offReason: 'standard'};
+      }
     }
-    if (event === 'toggle') {
-      const type = state.type === 'on' ? 'off' : 'on';
-      if (type === 'on') return {type};
-      return {type: 'off', offReason: 'standard'};
-    }
-    return state;
   }
 }
 const handler = new Handler();
