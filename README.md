@@ -22,8 +22,8 @@ type Def = DefineFuncmataDefinition<{
   };
   events: {
     set: {type: 'set'; isOn: boolean};
-    toggle: {type: 'toggle'; isOn: boolean};
-    emergencyStop: {type: 'emergencyStop'; isOn: boolean};
+    toggle: {type: 'toggle'};
+    emergencyStop: {type: 'emergencyStop'};
   };
 }>;
 
