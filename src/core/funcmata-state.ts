@@ -1,8 +1,8 @@
 import {
   AnyState,
   FuncmataDefinition,
-  EventArgs,
   EventType,
+  FuncmataEvent,
 } from './funcmata-definition';
 import {EventHandler} from './event-handler';
 
@@ -21,11 +21,10 @@ export class TFuncmataState {
 
   static emitEvent<Def extends FuncmataDefinition, Type extends EventType<Def>>(
     state: FuncmataState<Def>,
-    event: Type,
-    args: EventArgs<Def, Type>,
+    event: FuncmataEvent<Def, Type>,
     handler: EventHandler<Def>
   ): FuncmataState<Def> {
-    const newState = handler.handleEvent(event, state.current, args);
+    const newState = handler.handleEvent(event, state.current);
     return {
       current: newState,
     };

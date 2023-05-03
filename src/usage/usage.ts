@@ -1,8 +1,8 @@
 import {
   AnyState,
   DefineFuncmataDefinition,
-  EventArgs,
   EventType,
+  FuncmataEvent,
 } from '../core/funcmata-definition';
 import {EventHandler} from '../core/event-handler';
 import {TFuncmataState} from '../core/funcmata-state';
@@ -14,25 +14,24 @@ type Def = DefineFuncmataDefinition<{
     off: {type: 'off'; offReason: 'initial' | 'standard' | 'emergency'};
   };
   events: {
-    set: {args: {isOn: boolean}};
-    toggle: {args: {}};
-    emergencyStop: {args: {}};
+    set: {type: 'set'; isOn: boolean};
+    toggle: {type: 'toggle'; isOn: boolean};
+    emergencyStop: {type: 'emergencyStop'; isOn: boolean};
   };
 }>;
 
 // 2. Create event handler
 class Handler implements EventHandler<Def> {
   handleEvent<Type extends EventType<Def>>(
-    event: Type,
-    state: AnyState<Def>,
-    args: EventArgs<Def, Type>
+    event: FuncmataEvent<Def, Type>,
+    state: AnyState<Def>
   ): AnyState<Def> {
-    switch (event) {
+    switch (event.type) {
       case 'emergencyStop': {
         return {type: 'off', offReason: 'emergency'};
       }
       case 'set': {
-        const type = (args as EventArgs<Def, 'set'>).isOn ? 'on' : 'off';
+        const type = event.isOn ? 'on' : 'off';
         if (type === 'on') return {type};
         return {type: 'off', offReason: 'standard'};
       }
@@ -42,7 +41,6 @@ class Handler implements EventHandler<Def> {
         return {type: 'off', offReason: 'standard'};
       }
     }
-    return state;
   }
 }
 const handler = new Handler();
@@ -51,7 +49,11 @@ const handler = new Handler();
 const state = TFuncmataState.new<Def>({type: 'off', offReason: 'initial'});
 
 // 4. Emit event and maybe change state
-const newState = TFuncmataState.emitEvent(state, 'set', {isOn: true}, handler);
+const newState = TFuncmataState.emitEvent(
+  state,
+  {type: 'set', isOn: true},
+  handler
+);
 
 // 5. (Optional) Check difference and do something
 if (state.current.type === 'off' && newState.current.type === 'on') {
