@@ -12,4 +12,4 @@ export type FuncmataState<Def extends FuncmataDefinition> = Def['state'];
 export type EventType<Def extends FuncmataDefinition> = Def['event']['type'];
 export type FuncmataEvent<Def extends FuncmataDefinition> = Def['event'];
 
-export type DefineFuncmataDefinition<T extends FuncmataDefinition> = T;
+export type DefineFuncmata<T extends FuncmataDefinition> = T;

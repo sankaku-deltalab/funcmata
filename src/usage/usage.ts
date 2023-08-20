@@ -1,13 +1,13 @@
 import {
-  DefineFuncmataDefinition,
+  DefineFuncmata,
   FuncmataEvent,
   FuncmataState,
 } from '../core/funcmata-definition';
 import {EventHandler} from '../core/event-handler';
 import {Funcmata} from '../core/funcmata-state';
 
-// 1. Define config
-type Def = DefineFuncmataDefinition<{
+// 1. Define
+type Def = DefineFuncmata<{
   state:
     | {type: 'on'}
     | {type: 'off'; offReason: 'initial' | 'standard' | 'emergency'};
@@ -19,7 +19,7 @@ type Def = DefineFuncmataDefinition<{
 
 // 2. Create event handler
 class Handler implements EventHandler<Def> {
-  handleEvent(
+  update(
     event: FuncmataEvent<Def>,
     state: FuncmataState<Def>
   ): FuncmataState<Def> {
@@ -43,14 +43,11 @@ class Handler implements EventHandler<Def> {
 const handler = new Handler();
 
 // 3. Create state
-const state = Funcmata.new<Def>({type: 'off', offReason: 'initial'});
+const state = Funcmata.init<Def>({type: 'off', offReason: 'initial'});
 
 // 4. Emit event and maybe change state
-const newState = Funcmata.emitEvent<Def>(
-  state,
-  {type: 'set', isOn: true},
-  handler
-);
+const event = {type: 'set', isOn: true} as const;
+const newState = Funcmata.update<Def>(state, event, handler);
 
 // 5. (Optional) Check difference and do something
 if (state.type === 'off' && newState.type === 'on') {

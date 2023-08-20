@@ -4,12 +4,12 @@ import {
   FuncmataEvent,
 } from './funcmata-definition';
 
-export interface EventHandler<Def extends FuncmataDefinition> {
-  handleEvent(
+export interface EventDispatcher<Def extends FuncmataDefinition> {
+  dispatch(
     event: FuncmataEvent<Def>,
     state: FuncmataState<Def>
   ): FuncmataState<Def>;
 
   // I think onChange is not needed at here.
-  // onChange(oldState: AnyState<Def>, newState: AnyState<Def>): void;
+  // onChange(oldState: FuncmataState<Def>, newState: FuncmataState<Def>): void;
 }

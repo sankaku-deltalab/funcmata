@@ -1,3 +1,3 @@
 export * from './core/funcmata-definition';
-export * from './core/event-handler';
-export * from './core/funcmata-state';
+export * from './core/event-dispatcher';
+export * from './core/funcmata';
